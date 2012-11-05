@@ -1,0 +1,5 @@
+; comments begin with a ';' character.
+; The format of the list is as follows:
+; #channel-name channel-pass
+#hooptest wat
+#hooptest2

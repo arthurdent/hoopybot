@@ -1,25 +1,34 @@
 #!/bin/bash
 
+# File and binary locations
 CONFFILE="bot.conf"
+CHANFILE="chan.list"
 II="./bin/ii"
-CHAN_FILE="chans.list"
 
 # Grab the network, port, ssl, nick, password, remove extra whitespace
-#CONF="$(cat $CONFFILE | awk '/^[^#]/')"
-#BNET="$(echo "$CONF" | awk '/^network/ {print $3}')"
-#BPORT="$(echo "$CONF" | awk '/^port/ {print $3}')"
-#BSSL="$(echo "$CONF" | awk '/^ssl/ {print $3}')"
-#BNICK="$(echo "$CONF" | awk '/^nick/ {print $3}')"
-#BPASS="$(echo "$CONF" | awk '/^pass/ {print $3}')"
-#BCHANS="$(echo "$CONF" | awk '/^channels/ {print $3}')"
+CONF="$(cat $CONFFILE | awk '/^([^#])/')"
+echo "$CONF"
+BNET="$(echo "$CONF" | awk '/^network/ {print $3}')"
+BPORT="$(echo "$CONF" | awk '/^port/ {print $3}')"
+BSSL="$(echo "$CONF" | awk '/^ssl/ {print $3}')"
+BNICK="$(echo "$CONF" | awk '/^nick/ {print $3}')"
+BPASS="$(echo "$CONF" | awk '/^pass/ {print $3}')"
 
-#echo "NETWORK: $BNET"
-#echo "PORT: $BPORT"
-#echo "SSL: $BSSL"
-#echo "NICK: $BNICK"
-#echo "PASS: $BPASS"
-#echo "CHANS: $BCHANS"
+# Testing channel parsing
+CHAN_LIST="$(cat $CHANFILE | awk '/^([^;])/')"
+echo "$CHAN_LIST" | while read chan; do
+	echo "$chan"
+done
 
+# Debug
+echo "NETWORK: $BNET"
+echo "PORT: $BPORT"
+echo "SSL: $BSSL"
+echo "NICK: $BNICK"
+echo "PASS: $BPASS"
+echo "CHANS: $BCHANS"
+
+# Future stuff
 #./bin/ii -i ./networks -s "$BNET" -n "$BNICK" -f "$BNICK" -p "$BPORT" &
 #echo "$!" > .pid
 
