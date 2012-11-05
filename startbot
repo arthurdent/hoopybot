@@ -1,0 +1,30 @@
+#!/bin/bash
+
+CONFFILE="bot.conf"
+II="./bin/ii"
+CHAN_FILE="chans.list"
+
+# Grab the network, port, ssl, nick, password, remove extra whitespace
+#CONF="$(cat $CONFFILE | awk '/^[^#]/')"
+#BNET="$(echo "$CONF" | awk '/^network/ {print $3}')"
+#BPORT="$(echo "$CONF" | awk '/^port/ {print $3}')"
+#BSSL="$(echo "$CONF" | awk '/^ssl/ {print $3}')"
+#BNICK="$(echo "$CONF" | awk '/^nick/ {print $3}')"
+#BPASS="$(echo "$CONF" | awk '/^pass/ {print $3}')"
+#BCHANS="$(echo "$CONF" | awk '/^channels/ {print $3}')"
+
+#echo "NETWORK: $BNET"
+#echo "PORT: $BPORT"
+#echo "SSL: $BSSL"
+#echo "NICK: $BNICK"
+#echo "PASS: $BPASS"
+#echo "CHANS: $BCHANS"
+
+#./bin/ii -i ./networks -s "$BNET" -n "$BNICK" -f "$BNICK" -p "$BPORT" &
+#echo "$!" > .pid
+
+#./chanMux&
+#echo "$!" >> .pid
+
+#./scriptMux&
+#echo "$!" >> .pid
