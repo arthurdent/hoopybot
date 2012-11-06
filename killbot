@@ -1,0 +1,10 @@
+#!/bin/bash
+scriptdir="$(dirname $0)"
+
+if [ -r "$scriptdir/.pid" ]; then
+	while read pid; do
+		echo "Stopping: $( echo $pid|awk '{print $1}')" 
+		kill $(echo $pid | awk '{print $2}')
+	done < "$scriptdir/.pid"
+	rm "$scriptdir/.pid"
+fi

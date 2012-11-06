@@ -1,39 +1,21 @@
 #!/bin/bash
 
 # File and binary locations
-CONFFILE="bot.conf"
-CHANFILE="chan.list"
-II="./bin/ii"
+scriptdir="$(dirname $0)"
+botconf="$scriptdir/bot.conf"
+iibin="$scriptdir/bin/ii"
+cmux="$scriptdir/bin/cmux"
 
 # Grab the network, port, ssl, nick, password, remove extra whitespace
-CONF="$(cat $CONFFILE | awk '/^([^#])/')"
-echo "$CONF"
-BNET="$(echo "$CONF" | awk '/^network/ {print $3}')"
-BPORT="$(echo "$CONF" | awk '/^port/ {print $3}')"
-BSSL="$(echo "$CONF" | awk '/^ssl/ {print $3}')"
-BNICK="$(echo "$CONF" | awk '/^nick/ {print $3}')"
-BPASS="$(echo "$CONF" | awk '/^pass/ {print $3}')"
-
-# Testing channel parsing
-CHAN_LIST="$(cat $CHANFILE | awk '/^([^;])/')"
-echo "$CHAN_LIST" | while read chan; do
-	echo "$chan"
-done
-
-# Debug
-echo "NETWORK: $BNET"
-echo "PORT: $BPORT"
-echo "SSL: $BSSL"
-echo "NICK: $BNICK"
-echo "PASS: $BPASS"
-echo "CHANS: $BCHANS"
+bconf=$(   cat  "$botconf" | awk '/^[^#]/')
+netwk=$(   echo "$bconf"   | awk '/^network/ {print $3}')
+port=$(    echo "$bconf"   | awk '/^port/ {print $3}')
+usessl=$(  echo "$bconf"   | awk '/^ssl/ {print $3}')
+botnick=$( echo "$bconf"   | awk '/^nick/ {print $3}')
+botpass=$( echo "$bconf"   | awk '/^pass/ {print $3}')
 
 # Future stuff
-#./bin/ii -i ./networks -s "$BNET" -n "$BNICK" -f "$BNICK" -p "$BPORT" &
-#echo "$!" > .pid
+$iibin -i ./networks -s "$netwk" -n "$botnick" -f "$botnick" -p "$port" &
+echo "ii $!" > .pid
 
-#./chanMux&
-#echo "$!" >> .pid
-
-#./scriptMux&
-#echo "$!" >> .pid
+$cmux&

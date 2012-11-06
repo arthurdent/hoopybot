@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# File and binary locations
+scriptdir="$(dirname $0)/.."
+botconf="$scriptdir/bot.conf"
+chanfile="$scriptdir/chan.list"
+
+# Make sure ii is running.
+if [ ! -e "$scriptdir/.pid" ] ; then
+	echo "The Channel Multiplexer can't start without ii."
+	exit 1
+fi
+
+# Grab the network name
+bconf=$(cat   "$botconf" | awk '/^[^#]/')
+netwk=$(echo  "$bconf"   | awk '/^network/ {print $3}') 
+
+# Parse the channel list
+chlist=$(cat "$chanfile" | awk '/^[^;]/')
+
+# Get a list of channels and join it.
+for i in $(echo "$chlist" | awk '{ print NR }'); do
+	chan[$i]=$(echo "$chlist" | awk "NR==$i { print \$1 }")
+  chan_pipe[$i]="$scriptdir/networks/$netwk/${chan[$i]}/out"
+	echo ${chan_pipe[$i]}
+	echo "/j $(echo $chlist | awk "NR==$i {print \"\$1 \$3\" }")" >> $scriptdir/networks/$netwk/in
+done
+
+# touch channel out files
+touch ${chan_pipe[@]}
+
+# Do channel multiplexing logic
+tail -f -n0 "${chan_pipe[@]}" |
+while read line; do
+	# echo "$line"
+	# Kill script when shutdown script runs.
+	if [ ! -e "$scriptdir/.pid" ] ; then
+		break
+	fi
+	# Channel change logic
+	if [ "$(echo $line | awk '{print $1}')" = "==>" ] ; then
+		chan_out=$(echo $line | awk '{print $2}')
+		channel="$(dirname $chan_out)/in"
+		chanlog="$(dirname $chan_out)/logs"
+#	mkdir -p $chanlog
+	# If it's not changing channels, do bot stuff.
+	else
+		echo -n ""
+#		echo "$line" >> $chanlog
+	fi
+
+	
+
+	echo "runninag!"
+done
