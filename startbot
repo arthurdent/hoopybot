@@ -3,28 +3,34 @@
 sdir=$(dirname "$0")
 ntwk="irc.freenode.net"
 port="6667"
-nick="arthurtest"
+nick="alphasic"
 
 main() {
+
 	# Create input pipe
 	if [ ! -p "$sdir/in" ] ; then
 		mkfifo $sdir/in
 	fi
 
+	# Start the process, pipe output to main loop.
 	./bin/sic -h "$ntwk" -p "$port" -n "$nick" <> $sdir/in |
 	while read line; do
-		echo "$line $(echo $line | awk '{print $5}')"
-		if [ $(echo "$line" | awk '{print $5}') = "376" ] ; then
-			join_channels
-		fi
+
+	# echo output to stdout, cuz why not?
+	echo "$line"
+
+	# Join channels after MOTD
+	[ $(echo "$line" | awk '{print $5}') = "376" ] && join_channels
+
 	done
 }
 
 function join_channels() {
 
+	# Read from channel file and join channels
 	cat $sdir/channels |
 	while read line; do
-		echo ":j $line" > $sdir/in
+		[ "${line:0:1}" = "#" ] && echo ":j $line" > $sdir/in
 	done
 
 }

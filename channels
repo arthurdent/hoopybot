@@ -1,0 +1,4 @@
+; Comments are any line starting without a # (wtf.)
+; I like to prepend them with ';' but I'm an example file not a cop.
+
+; Format: "#channel pass"
