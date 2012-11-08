@@ -1,4 +1,6 @@
-What do?
+Wat do?
 
-Hoopybot is a bot built using bash, and irc it by suckless tools.
+A bot built using bash, and sic irc by suckless tools.
+
+The bot uses fifo pipes, making it very extensible.
 

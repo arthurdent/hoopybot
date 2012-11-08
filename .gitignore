@@ -1,5 +1,4 @@
-bin/sic
-src/*
+bin/*
 *.swp
 .pid
 in
