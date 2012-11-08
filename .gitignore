@@ -1,5 +1,7 @@
-bin/ii
+bin/sic
 src/*
-networks/*
 *.swp
 .pid
+in
+out
+channels

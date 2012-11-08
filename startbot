@@ -1,21 +1,32 @@
 #!/bin/bash
 
-# File and binary locations
-scriptdir="$(dirname $0)"
-botconf="$scriptdir/bot.conf"
-iibin="$scriptdir/bin/ii"
-cmux="$scriptdir/bin/cmux"
+sdir=$(dirname "$0")
+ntwk="irc.freenode.net"
+port="6667"
+nick="arthurtest"
 
-# Grab the network, port, ssl, nick, password, remove extra whitespace
-bconf=$(   cat  "$botconf" | awk '/^[^#]/')
-netwk=$(   echo "$bconf"   | awk '/^network/ {print $3}')
-port=$(    echo "$bconf"   | awk '/^port/ {print $3}')
-usessl=$(  echo "$bconf"   | awk '/^ssl/ {print $3}')
-botnick=$( echo "$bconf"   | awk '/^nick/ {print $3}')
-botpass=$( echo "$bconf"   | awk '/^pass/ {print $3}')
+main() {
+	# Create input pipe
+	if [ ! -p "$sdir/in" ] ; then
+		mkfifo $sdir/in
+	fi
 
-# Future stuff
-$iibin -i ./networks -s "$netwk" -n "$botnick" -f "$botnick" -p "$port" &
-echo "ii $!" > .pid
+	./bin/sic -h "$ntwk" -p "$port" -n "$nick" <> $sdir/in |
+	while read line; do
+		echo "$line $(echo $line | awk '{print $5}')"
+		if [ $(echo "$line" | awk '{print $5}') = "376" ] ; then
+			join_channels
+		fi
+	done
+}
 
-$cmux&
+function join_channels() {
+
+	cat $sdir/channels |
+	while read line; do
+		echo ":j $line" > $sdir/in
+	done
+
+}
+
+main
