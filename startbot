@@ -4,6 +4,7 @@
 cwd=$(dirname "$0")
 conf="$cwd/bot.conf"
 sicbin="$cwd/bin/sic"
+scriptmux="$cwd/bin/smux"
 
 # Grab a bunch of info from the conf file.
 source "$cwd/bot.conf"
@@ -18,17 +19,23 @@ function main() {
 	# Start the process, pipe output to main loop.
 	$sicbin -h "$network" -p "$port" -n "$nick" <> $cwd/in |
 	while read line; do
-		# echo output to stdout, cuz why not?
-		echo "$line"
-		# Join channels after MOTD
+	
+		# Auto join channels after MOTD
 		[ $(echo "$line" | awk '{print $5}') = "376" ] && join_channels
+
+		# Print output to stdout. (why not?)
+		echo "$line"
+
+		# Run scripts and stuff
+		$scriptmux $line
+
 	done
 }
 
 function join_channels() {
 
 	# Read from channel file and join channels
-	cat $cwd/channels |
+	cat "$cwd/channels" |
 	while read line; do
 		[ "${line:0:1}" = "#" ] && echo ":j $line" > $cwd/in
 	done
@@ -42,6 +49,15 @@ function join_channels() {
 		done
 	fi
 
+}
+
+function add_channel() {
+	echo "$@" >> $cwd/channels
+}
+
+function rm_channel() {
+	awk "/$1/ {next} {print}" $cwd/ctemp
+	mv $cwd/ctemp $cwd/channels
 }
 
 main

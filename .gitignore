@@ -1,4 +1,5 @@
 bin/*
+scripts/*
 *.swp
 .pid
 in
