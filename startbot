@@ -15,13 +15,10 @@ main() {
 	# Start the process, pipe output to main loop.
 	./bin/sic -h "$ntwk" -p "$port" -n "$nick" <> $sdir/in |
 	while read line; do
-
-	# echo output to stdout, cuz why not?
-	echo "$line"
-
-	# Join channels after MOTD
-	[ $(echo "$line" | awk '{print $5}') = "376" ] && join_channels
-
+		# echo output to stdout, cuz why not?
+		echo "$line"
+		# Join channels after MOTD
+		[ $(echo "$line" | awk '{print $5}') = "376" ] && join_channels
 	done
 }
 
@@ -32,6 +29,15 @@ function join_channels() {
 	while read line; do
 		[ "${line:0:1}" = "#" ] && echo ":j $line" > $sdir/in
 	done
+	
+	# You can remove this next if block if you like.
+	# My gitignored file with testing channels in it.
+	if [ -f "$sdir/.chans" ] ; then
+		cat $sdir/.chans |
+		while read line; do
+			[ "${line:0:1}" = "#" ] && echo ":j $line" > $sdir/in
+		done
+	fi
 
 }
 

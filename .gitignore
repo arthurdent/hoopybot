@@ -3,4 +3,4 @@ bin/*
 .pid
 in
 out
-channels
+.chans
