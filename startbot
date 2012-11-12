@@ -43,7 +43,7 @@ function join_channels() {
 	# You can remove this next if block if you like.
 	# My gitignored file with testing channels in it.
 	if [ -f "$cwd/.chans" ] ; then
-		cat $cwd/.chans |
+		cat "$cwd/.chans" |
 		while read line; do
 			[ "${line:0:1}" = "#" ] && echo ":j $line" > $cwd/in
 		done
