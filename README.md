@@ -10,7 +10,7 @@ The bot uses fifo pipes, making it very extensible.
 
 ### How to
 1. Compile sic.
-	1. cd src
+	1. cd src/sic-1.1
 	1. make
 	1. cp sic ../../bin
 1. Open the bot.conf and fill out the details
