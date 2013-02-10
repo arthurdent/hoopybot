@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Converted legacy script. TODO: Convert dependencies to awk when possible.
+
+cwd=$(dirname "$0")
+channel=$(echo "$@" | awk '{print $1}')
+command=$(echo "$@" | awk '{print $6}')
+
+###########################
+# Have your FORTUNE told! #
+###########################
+
+if [ "$command" = '!fortune' ] ; then
+
+	# Set default channel
+	echo ":s $channel" > $cwd/../in
+
+	# Strip out all of the newline characters and then insert newlines at every 400th character
+	fortune=$(fortune | tr '\n|\t' ' ' | sed -e 's/.\{400\}/&\n/g')
+
+	# Send message to channel
+	echo "$fortune" > $cwd/../in
+
+fi
