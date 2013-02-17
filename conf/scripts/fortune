@@ -1,0 +1,34 @@
+#!/bin/bash
+
+###########################
+# Have your FORTUNE told! #
+###########################
+
+# Scripts are passed every message that the bot recieves,
+# so the trigger is entirely up to the script.
+
+# Pre-defined variables that are useful for scripts
+# $channel   : The current channel or nick if privmsg
+# $nick      : The nick of the user who sent the message
+# $message   : The entire line that the user sent
+
+# Everything except for the load_script line will need to be in a function.
+# Make sure your script has the +x attribute, or else it won't be loaded.
+
+# Create a unique function name for your script.
+fortune_main() {
+
+	# Wait until somebody says "!fortune" in a channel or privmsg 
+	if [ "$message" = '!fortune' ] ; then
+
+		# This command does exactly what you might imagine.
+		botsay "$channel $(fortune)"
+
+	fi
+
+}
+
+# This line will tell your bot what function is associated 
+# with the script file. You may store multiple scripts
+# in one file and call load_script multiple times.
+load_script fortune_main

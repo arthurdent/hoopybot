@@ -1,63 +1,59 @@
 #!/bin/bash
+set -f
 
-# Current location.
+# Configuration locations
 cwd=$(dirname "$0")
-conf="$cwd/bot.conf"
-sicbin="$cwd/bin/sic"
-scriptmux="$cwd/bin/smux"
 
-# Grab a bunch of info from the conf file.
-source "$cwd/bot.conf"
+# Source some larger scripts
+source "$cwd/conf/bot.conf"
+source ctrlbot
+joinset="premotd"
 
-function main() {
+botstart() {
 
 	# Create input pipe
-	if [ ! -p "$cwd/in" ] ; then
-		mkfifo $cwd/in
+	if [ ! -p "$pipe/in" ] ; then
+		mkfifo "$pipe/in"
+		touch "$pipe/out"
 	fi
 
 	# Start the process, pipe output to main loop.
-	$sicbin -h "$network" -p "$port" -n "$nick" <> $cwd/in |
+	sic -h "$network" -p "$port" -n "$bot_nick" <> $pipe/in |
 	while read line; do
-	
-		# Auto join channels after MOTD
-		[ $(echo "$line" | awk '{print $5}') = "376" ] && join_channels
 
-		# Print output to stdout. (why not?)
-		echo "$line"
+		set -- $line
+		echo "$line" >> $pipe/out
 
-		# Run scripts and stuff
-		$scriptmux $line
+		if [ "$joinset" = "premotd" ]; then # Don't awk more than necessary
+			[ $(echo "$line" | awk '{print $5}') = "376" ] && joinset="postmotd"
+		elif [ "$joinset" = "postmotd" ] ; then
+			echo "Joining channels... " >> $pipe/out
+			join_channels
+			joinset="done"
+		elif [ "$joinset" = "done" ]; then
+			channel="$1"
+			nick="$(echo "$5" | sed -e 's/[\>\<]//g')"
+			message="${@:6}"
+			[ "$channel" == "$bot_nick" ] && channel="$nick"
+			[ "$6" == '!reload' ] && bot_load
+			run_scripts
+		fi
 
 	done
-}
-
-function join_channels() {
-
-	# Read from channel file and join channels
-	cat "$cwd/channels" |
-	while read line; do
-		[ "${line:0:1}" = "#" ] && echo ":j $line" > $cwd/in
-	done
-	
-	# You can remove this next if block if you like.
-	# My gitignored file with testing channels in it.
-	if [ -f "$cwd/.chans" ] ; then
-		cat "$cwd/.chans" |
-		while read line; do
-			[ "${line:0:1}" = "#" ] && echo ":j $line" > $cwd/in
-		done
-	fi
 
 }
 
-function add_channel() {
-	echo "$@" >> $cwd/channels
+bot_load() {
+	echo "Reloading ... " >> $pipe/out
+	source ctrlbot
+	echo "done." >> $pipe/out
 }
 
-function rm_channel() {
-	awk "/$1/ {next} {print}" $cwd/ctemp
-	mv $cwd/ctemp $cwd/channels
-}
+# For internal use, or non daemon use.
+if [ "$1" == "daemon" ] ; then
+	botstart
+else
+	$0 "daemon"&
+	exit 0
+fi
 
-main

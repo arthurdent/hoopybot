@@ -1,0 +1,106 @@
+#!/bin/bash
+set -f
+
+# Configuration variables.
+cwd=$(dirname "$0")
+sicbin="$cwd/conf/bin/sic"
+chans="$cwd/conf/channels"
+pipe="$cwd/conf/pipes/"
+scriptdir="$cwd/conf/scripts"
+script_list=(':')
+PATH="$cwd:$cwd/conf/bin:$PATH"
+
+join_channels() {
+
+	# Read from channel file and join channels
+	cat "$chans" |
+	while read line; do
+		[ "${line:0:1}" = "#" ] && echo ":j $line" > $pipe/in
+	done
+	
+	# You can remove this next if block if you like.
+	# My gitignored file with testing channels in it.
+	if [ -f "$cwd/.chans" ] ; then
+		cat "$cwd/.chans" |
+		while read line; do
+			[ "${line:0:1}" = "#" ] && echo ":j $line" > $pipe/in
+		done
+	fi
+
+}
+
+run_scripts() {
+	#echo "nick: $nick" >> $pipe/out
+	[ "$nick" == "$bot_nick" ] && return
+	for script in "${script_list[@]}" ; do
+		"$script"
+	done
+}
+
+join_channel() {
+	echo ":j $1 $2" > $pipe/in
+}
+
+leave_channel() {
+	echo ":j $1 $2" > $pipe/in
+
+}
+
+add_channel() {
+	echo "$@" >> $chans
+	echo ":j $1 $2" > $pipe/in
+}
+
+quit_bot() {
+	echo ":quit $@" > $pipe/in
+}
+
+rm_channel() {
+	awk "/$1/ {next} {print}" $cwd/.ctemp
+	mv $cwd/.ctemp $pipe/channels
+}
+
+botsay() {
+	set -- $1
+	echo ":s $1" > $pipe/in
+
+	# Strip out all of the newline characters and then insert newlines 
+	# at every 400th character, so it doesn't get trimmed by the server.
+	echo "$(echo ${@:2} | tr '\n|\t' ' ' | sed -e 's/.\{400\}/&\n/g')" > $pipe/in
+}
+
+scripts_reload() {
+	set +f
+	script_list=(':')
+	for script in "$scriptdir"/*; do
+		if [ -x "$script" ]; then
+			source "$script"
+			echo "loading script: $script" >> $pipe/out
+		else
+			echo "not loading script: $script, needs to be marked executable" >> $pipe/out
+		fi
+	done
+	set -f
+}
+
+load_script() {
+	
+	script_list+=("$1")
+}
+
+# Load all the scripts when sourcing this file
+scripts_reload
+
+if [ "$1" == "join" ]; then
+	join_channel $2 $3
+elif [ "$1" == "part" ]; then
+	leave_channel "$2"
+elif [ "$1" == "autojoin" ]; then
+	join_channels	
+elif [ "$1" == "add" ]; then
+	add_channel "$2" "$3"
+elif [ "$1" == "remove" ]; then
+	rm_channel "$2"
+elif [ "$1" == "kill" ]; then
+	quit_bot ${@:1}
+fi

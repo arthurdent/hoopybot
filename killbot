@@ -1,5 +1,0 @@
-#!/bin/bash
-
-cwd=$(dirname $0)
-
-echo ":quit $@" > $cwd/in

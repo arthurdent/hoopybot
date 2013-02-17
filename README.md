@@ -4,22 +4,17 @@ A bot built using bash, and sic irc by suckless tools.
 The bot uses fifo pipes, making it very extensible.
 
 ### Dependencies
-* bash
-* awk
-* sic - (source included)
+bash, sed, awk, tr, sic (source included), fortune-mod (optional)
 
 ### How to
 1. Compile sic.
-	1. cd src/sic-1.1
-	1. make
-	1. cp sic ../../bin
-1. Open the bot.conf and fill out the details
-1. start the bot by running ./startbot > out&
-	* this will pipe bot logs to a file called out and run the bot in the background
-	* use "tail -f out" if you want to follow what is being said live. ctrl+c to stop "tail -f"
-1. stop the bot by running ./killbot
+	1. cd conf/src/sic-1.1
+	2. make
+	3. cp sic ../../bin
+2. Open the bot.conf and fill out the details
+3. start the bot by running ./startbot
+	* this will pipe bot logs to a file called out in conf/pipes/ and run the bot in the background
+	* use "tail -f conf/pipes/out" to monitor bot events.
+4. stop the bot by running ./killbot
 
-* Scripts go in the scripts/ dir and need +x to execute. All executable files in the scripts/ dir are currently simply passed args of every string sent by someone in a channel in the form of:
-> #channel	: DD/MM/YY hh:mm <name> what the user said
-
-The way scripts work is subject to change as I improve the bot
+Scripts go in the conf/scripts/ dir and need +x to execute. See the example script conf/scripts/fortune for a simple tutorial on how to write scripts.
