@@ -1,14 +1,15 @@
 #!/bin/bash
 set -f
+unset -v IFS
+
+# This should work on BSD >= 4.3, and Linux
+# I'll work out OS X later.
+cwd=$(dirname "$(realpath -q "$0")")
 
 # Configuration locations
-cwd=$(dirname "$0")
-
-# Source some larger scripts
 source "$cwd/conf/bot.conf"
 [ -e "$cwd/.botconf" ] && source "$cwd/.botconf"
 source ctrlbot
-joinset="premotd"
 
 botstart() {
 
@@ -22,22 +23,19 @@ botstart() {
 	sic -h "$network" -p "$port" -n "$bot_nick" <> $pipe/in |
 	while read line; do
 
-		set -- $line
-		echo "$line" >> $pipe/out
+		read -ra toks <<< "$line"
+		echo "${toks[@]}" >> $pipe/out
 
-		if [ "$joinset" = "premotd" ]; then # Don't awk more than necessary
-			[ $(echo "$line" | awk '{print $5}') = "376" ] && joinset="postmotd"
-		elif [ "$joinset" = "postmotd" ] ; then
+		if [ ${toks[4]} == "376" ] ; then
 			echo "Joining channels... " >> $pipe/out
 			join_channels
-			joinset="done"
 			botsay "nickserv $bot_pass"
-		elif [ "$joinset" = "done" ]; then
-			channel="$1"
-			nick="$(echo "$5" | sed -e 's/[\>\<]//g')"
-			message="${@:6}"
+		else 
+			channel="${toks[0]}"
+			nick="${toks[4]//[<>]/}"
+			message="${toks[@]:5}"
 			[ "$channel" == "$bot_nick" ] && channel="$nick"
-			[ "$6" == '!reload' ] && bot_load
+			[ "${toks[5]}" == '!reload' ] && bot_load
 			run_scripts
 		fi
 

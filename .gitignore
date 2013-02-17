@@ -1,7 +1,8 @@
 conf/bin/*
-conf/pipes
-conf/scripts/ritescript
-conf/scripts/fortune-ext
+conf/pipes/in
+conf/pipes/out
+conf/scripts/*
+!conf/scripts/fortune
 *.swp
 .botconf
 .chans
