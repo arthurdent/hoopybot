@@ -4,7 +4,7 @@ A bot built using bash, and sic irc by suckless tools.
 The bot uses fifo pipes, making it very extensible.
 
 ### Dependencies
-bash, sed, awk, tr, sic (source included), fortune-mod (optional)
+bash, sic (source included), fortune-mod (optional)
 
 ### How to
 1. Compile sic.
@@ -15,6 +15,6 @@ bash, sed, awk, tr, sic (source included), fortune-mod (optional)
 3. start the bot by running ./startbot
 	* this will pipe bot logs to a file called out in conf/pipes/ and run the bot in the background
 	* use "tail -f conf/pipes/out" to monitor bot events.
-4. stop the bot by running ./killbot
+4. stop the bot by running ./ctrlbot kill
 
 Scripts go in the conf/scripts/ dir and need +x to execute. See the example script conf/scripts/fortune for a simple tutorial on how to write scripts.

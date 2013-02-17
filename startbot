@@ -2,9 +2,8 @@
 set -f
 unset -v IFS
 
-# This should work on BSD >= 4.3, and Linux
-# I'll work out OS X later.
-cwd=$(dirname "$(realpath -q "$0")")
+# This should retrieve the location of the script in a reasonably reliable way.
+[[ "$(type -ft realpath)" == "file" ]] && cwd="$(dirname "$(realpath -q "$0")")" || cwd="$(dirname $0)"
 
 # Configuration locations
 source "$cwd/conf/bot.conf"
