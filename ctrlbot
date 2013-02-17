@@ -62,11 +62,9 @@ rm_channel() {
 
 botsay() {
 	set -- $1
-	echo ":s $1" > $pipe/in
-
 	# Strip out all of the newline characters and then insert newlines 
 	# at every 400th character, so it doesn't get trimmed by the server.
-	echo "$(echo ${@:2} | tr '\n|\t' ' ' | sed -e 's/.\{400\}/&\n/g')" > $pipe/in
+	echo -e ":m $1 $(echo ${@:2} | tr '\n|\t' ' ' | sed -e 's/.\{400\}/&\n/g')" > $pipe/in
 }
 
 scripts_reload() {
