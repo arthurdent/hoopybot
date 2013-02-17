@@ -3,5 +3,5 @@ conf/pipes
 conf/scripts/ritescript
 conf/scripts/fortune-ext
 *.swp
-.pid
+.botconf
 .chans

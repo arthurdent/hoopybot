@@ -6,6 +6,7 @@ cwd=$(dirname "$0")
 
 # Source some larger scripts
 source "$cwd/conf/bot.conf"
+[ -e "$cwd/.botconf" ] && source "$cwd/.botconf"
 source ctrlbot
 joinset="premotd"
 
@@ -30,6 +31,7 @@ botstart() {
 			echo "Joining channels... " >> $pipe/out
 			join_channels
 			joinset="done"
+			botsay "nickserv $bot_pass"
 		elif [ "$joinset" = "done" ]; then
 			channel="$1"
 			nick="$(echo "$5" | sed -e 's/[\>\<]//g')"
