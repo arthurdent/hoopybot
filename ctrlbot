@@ -56,6 +56,8 @@ rm_channel() {
 
 botsay() {
 
+	echo "$@" >> "$pipe"/out
+
 	# Tokenize input
 	read -ra toks <<< "$@"
 	chan="${toks[0]}"
@@ -93,7 +95,6 @@ load_script() {
 }
 
 # Load all the scripts when sourcing this file
-scripts_reload
 
 if [[ "$1" == "join" ]]; then
 	join_channel $2 $3
@@ -105,6 +106,10 @@ elif [[ "$1" == "add" ]]; then
 	add_channel "$2" "$3"
 elif [[ "$1" == "remove" ]]; then
 	rm_channel "$2"
+elif [[ "$1" == "say" ]]; then
+	botsay "${@:2}"
 elif [[ "$1" == "kill" ]]; then
-	quit_bot ${@:1}
+	quit_bot "${@:1}"
+else
+	scripts_reload
 fi

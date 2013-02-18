@@ -4,6 +4,7 @@ unset -v IFS
 
 # This should retrieve the location of the script in a reasonably reliable way.
 [[ "$(type -ft realpath)" == "file" ]] && cwd="$(dirname "$(realpath -q "$0")")" || cwd="$(dirname $0)"
+PATH="$cwd:$cwd/conf/bin:$PATH"
 
 # Configuration locations
 source "$cwd/conf/bot.conf"
