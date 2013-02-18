@@ -59,7 +59,8 @@ botsay() {
 	# Tokenize input
 	read -ra toks <<< "$@"
 	chan="${toks[0]}"
-	mesg="${toks[@]//$'\n'/$' ':1}" # Strip out all \n 
+	mesg="${toks[@]:1}"
+	mesg="${mesg//$'\n'/$' '}" # Strip out all \n 
 
 	# Set the channel
 	echo ":s $chan" > $pipe/in
