@@ -7,13 +7,13 @@ unset -v IFS
 
 # Configuration locations
 source "$cwd/conf/bot.conf"
-[ -e "$cwd/.botconf" ] && source "$cwd/.botconf"
+[[ -e "$cwd/.botconf" ]] && source "$cwd/.botconf"
 source ctrlbot
 
 botstart() {
 
 	# Create input pipe
-	if [ ! -p "$pipe/in" ] ; then
+	if [[ ! -p "$pipe/in" ]] ; then
 		mkfifo "$pipe/in"
 		touch "$pipe/out"
 	fi
@@ -25,7 +25,7 @@ botstart() {
 		read -ra toks <<< "$line"
 		echo "${toks[@]}" >> $pipe/out
 
-		if [ ${toks[4]} == "376" ] ; then
+		if [[ ${toks[4]} == "376" ]] ; then
 			echo "Joining channels... " >> $pipe/out
 			join_channels
 			botsay "nickserv $bot_pass"
@@ -33,8 +33,8 @@ botstart() {
 			channel="${toks[0]}"
 			nick="${toks[4]//[<>]/}"
 			message="${toks[@]:5}"
-			[ "$channel" == "$bot_nick" ] && channel="$nick"
-			[ "${toks[5]}" == '!reload' ] && bot_load
+			[[ "$channel" == "$bot_nick" ]] && channel="$nick"
+			[[ "${toks[5]}" == '!reload' ]] && bot_load
 			run_scripts
 		fi
 
@@ -49,7 +49,7 @@ bot_load() {
 }
 
 # For internal use, or non daemon use.
-if [ "$1" == "daemon" ] ; then
+if [[ "$1" == "daemon" ]] ; then
 	botstart
 else
 	$0 "daemon"&

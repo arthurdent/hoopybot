@@ -4,7 +4,7 @@ A bot built using bash, and sic irc by suckless tools.
 The bot uses fifo pipes, making it very extensible.
 
 ### Dependencies
-bash, sic (source included), fortune-mod (optional)
+bash, sic (source included), fortune-mod (optional), tail (optional)
 
 ### How to
 1. Compile sic.
