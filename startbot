@@ -28,7 +28,7 @@ botstart() {
 		if [[ ${toks[4]} == "376" ]] ; then
 			echo "Joining channels... " >> $pipe/out
 			join_channels
-			botsay "nickserv $bot_pass"
+			botsay "nickserv identify $bot_pass"
 		else 
 			channel="${toks[0]}"
 			nick="${toks[4]//[<>]/}"
