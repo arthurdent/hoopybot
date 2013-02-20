@@ -59,18 +59,15 @@ botsay() {
 	echo "$@" >> "$pipe"/out
 
 	# Tokenize input
-	read -ra toks <<< "$@"
+	read -ra toks <<< "${@//$'\n'/$' '}"
+
 	chan="${toks[0]}"
 	mesg="${toks[@]:1}"
-	mesg="${mesg//$'\n'/$' '}" # Strip out all \n 
 
-	# Set the channel
-	echo ":s $chan" > $pipe/in
-	
 	# Split at every 400th character, so the 
 	# message isn't too long for the server.
 	for ((c = 0; c < "${#mesg}"; c+= 400)); do
-		echo "${mesg:c:c+400}" > "$pipe"/in
+		echo ":m $chan ${mesg:c:c+400}" > $pipe/in
 	done
 
 }
