@@ -56,8 +56,6 @@ rm_channel() {
 
 botsay() {
 
-	echo "$@" >> "$pipe"/out
-
 	# Tokenize input
 	read -ra toks <<< "${@//$'\n'/$' '}"
 
