@@ -1,8 +1,11 @@
 #!/bin/bash
 set -f
 
+# This should retrieve the location of the script in a reasonably reliable way.
+[[ "$(type -ft realpath)" == "file" ]] && cwd="$(dirname "$(realpath -q "$0")")" || cwd="$(dirname $0)"
+PATH="$cwd:$cwd/conf/bin:$PATH"
+
 # Configuration variables.
-cwd=$(dirname "$(realpath -q "$0")")
 sicbin="$cwd/conf/bin/sic"
 chans="$cwd/conf/channels"
 pipe="$cwd/conf/pipes/"
@@ -50,6 +53,8 @@ quit_bot() {
 
 rm_channel() {
 	
+	# The only instance of awk. Not really integral 
+	# to running the bot, so I'm going to let it slide.
 	awk "/$1/ {next} {print}" $cwd/.ctemp
 	mv $cwd/.ctemp $pipe/channels
 }

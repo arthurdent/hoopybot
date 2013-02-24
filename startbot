@@ -3,6 +3,8 @@ set -f
 unset -v IFS
 
 # This should retrieve the location of the script in a reasonably reliable way.
+# The script probably still won't work if started from a symlink to the binary.
+# Instead, if you must, make a symlink to the folder containing the bot.
 [[ "$(type -ft realpath)" == "file" ]] && cwd="$(dirname "$(realpath -q "$0")")" || cwd="$(dirname $0)"
 PATH="$cwd:$cwd/conf/bin:$PATH"
 
