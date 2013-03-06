@@ -1,0 +1,37 @@
+#!/bin/bash
+
+################################
+# Generate a special fortune   #
+# file with whatever you want. #
+################################
+
+# Dependencies (optional): wc, cut
+
+fort_gen_main() {
+
+	# cmd to look for	
+	fortcmd="!meme"
+	
+	# cmd to compare to cmd to look for
+	in_cmd="${message%% *}"
+
+	# Location of the directory where fortgen and fortgen.dat are stored
+	fortloc="$cwd/conf/scripts/fortgen"
+
+
+	if   [[ "$in_cmd" == "$fortcmd" ]]; then
+		botsay "$channel $(fortune "$fortloc/fortgen")"
+
+	elif [[ "$in_cmd" == "$fortcmd-add" ]] ; then
+		fortmes="${message#* }"
+		echo -e "$fortmes\n%" >> "$fortloc/fortgen"
+		strfile "$fortloc/fortgen" "$fortloc/fortgen.dat"
+
+	elif [[ "$in_cmd" == "!$fort_cmd-count" ]] ; then
+		botsay "$channel $(($(wc -l "$fortloc/fortgen" | cut -d' ' -f1) / 2)) total entries."
+
+	fi
+
+}
+
+load_script fort_gen_main

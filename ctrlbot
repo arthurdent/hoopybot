@@ -79,7 +79,7 @@ scripts_reload() {
 	set +f
 	script_list=(':')
 	for script in "$scriptdir"/*; do
-		if [ -x "$script" ]; then
+		if [[ -x "$script" && -f "$script" ]]; then
 			source "$script"
 			echo "loading script: $script" >> $pipe/out
 		else
