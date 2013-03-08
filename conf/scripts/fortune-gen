@@ -27,7 +27,7 @@ fort_gen_main() {
 		echo -e "$fortmes\n%" >> "$fortloc/fortgen"
 			strfile "$fortloc/fortgen" "$fortloc/fortgen.dat" > /dev/null 2>&1
 
-	elif [[ "$in_cmd" == "!$fort_cmd-count" ]] ; then
+	elif [[ "$in_cmd" == "$fortcmd-count" ]] ; then
 		botsay "$channel $(($(wc -l "$fortloc/fortgen" | cut -d' ' -f1) / 2)) total entries."
 
 	fi
