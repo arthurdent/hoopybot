@@ -18,3 +18,6 @@ bash, sic (source included), fortune-mod (optional), tail (optional)
 4. stop the bot by running ./ctrlbot kill
 
 Scripts go in the conf/scripts/ dir and need +x to execute. See the example script conf/scripts/fortune for a simple tutorial on how to write scripts.
+
+### Todo:
+* Permissions
