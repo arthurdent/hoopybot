@@ -13,6 +13,8 @@ scriptdir="$cwd/conf/scripts"
 script_list=(':')
 PATH="$cwd:$cwd/conf/bin:$PATH"
 
+exec 3>> $pipe/out
+
 join_channels() {
 
 	# This line is for my testing config.
@@ -39,7 +41,6 @@ join_channel() {
 
 leave_channel() {
 	echo ":j $1 $2" > $pipe/in
-
 }
 
 add_channel() {
@@ -47,16 +48,22 @@ add_channel() {
 	echo ":j $1 $2" > $pipe/in
 }
 
-quit_bot() {
-	echo ":quit $@" > $pipe/in
-}
-
 rm_channel() {
-	
 	# The only instance of awk. Not really integral 
 	# to running the bot, so I'm going to let it slide.
 	awk "/$1/ {next} {print}" $cwd/.ctemp
 	mv $cwd/.ctemp $pipe/channels
+}
+
+# Load all the scripts when sourcing this file
+
+quit_bot() {
+	echo ":quit" > $pipe/in
+}
+
+# Send to outfile.
+botlog() {
+	echo "$@" >&3
 }
 
 botsay() {
@@ -81,20 +88,18 @@ scripts_reload() {
 	for script in "$scriptdir"/*; do
 		if [[ -x "$script" && -f "$script" ]]; then
 			source "$script"
-			echo "loading script: $script" >> $pipe/out
+			botlog "loading script: $script"
 		else
-			echo "not loading script: $script, needs to be marked executable" >> $pipe/out
+			botlog "not loading script: $script, needs to be marked executable"
 		fi
 	done
 	set -f
 }
 
 load_script() {
-	
 	script_list+=("$1")
 }
 
-# Load all the scripts when sourcing this file
 
 if [[ "$1" == "join" ]]; then
 	join_channel $2 $3

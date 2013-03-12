@@ -12,6 +12,7 @@ PATH="$cwd:$cwd/conf/bin:$PATH"
 source "$cwd/conf/bot.conf"
 [[ -e "$cwd/.botconf" ]] && source "$cwd/.botconf"
 source ctrlbot
+bot_loaded="false"
 
 botstart() {
 
@@ -26,18 +27,21 @@ botstart() {
 	while read line; do
 
 		read -ra toks <<< "$line"
-		echo "${toks[@]}" >> $pipe/out
+		botlog "${toks[@]}"
 
 		if [[ ${toks[4]} == "376" ]] ; then
-			echo "Joining channels... " >> $pipe/out
+			botlog "Joining channels... "
 			join_channels
 			botsay "nickserv identify $bot_pass"
+			bot_loaded="true"
 		else 
 			channel="${toks[0]}"
 			nick="${toks[4]//[<>]/}"
 			message="${toks[@]:5}"
 			[[ "$channel" == "$bot_nick" ]] && channel="$nick"
 			[[ "${toks[5]}" == '!reload' ]] && bot_load
+			# Speed up motd scroll by not running scripts.
+			#[[ "$bot_loaded" == 'true'   ]] && 
 			run_scripts
 		fi
 
@@ -45,17 +49,19 @@ botstart() {
 
 }
 
+
+# Reload ctrlbot and scripts
 bot_load() {
-	echo "Reloading ... " >> $pipe/out
+	botlog "Reloading ... "
 	source ctrlbot
-	echo "done." >> $pipe/out
+	botlog "done."
 }
 
 # For internal use, or non daemon use.
 if [[ "$1" == "daemon" ]] ; then
 	botstart
 else
-	$0 "daemon"&
+	$0 "daemon"& > /dev/null 2>&1
 	exit 0
 fi
 
