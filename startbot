@@ -41,8 +41,7 @@ botstart() {
 			[[ "$channel" == "$bot_nick" ]] && channel="$nick"
 			[[ "${toks[5]}" == '!reload' ]] && bot_load
 			# Speed up motd scroll by not running scripts.
-			#[[ "$bot_loaded" == 'true'   ]] && 
-			run_scripts
+			[[ "$bot_loaded" == 'true'   ]] && run_scripts
 		fi
 
 	done
