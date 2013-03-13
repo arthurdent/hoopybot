@@ -18,15 +18,18 @@ fort_gen_main() {
 	# Location of the directory where fortgen and fortgen.dat are stored
 	fortloc="$cwd/conf/scripts/fortgen"
 
+	# Message following command
+	fortmes="${message#* }"
 
 	if   [[ "$in_cmd" == "$fortcmd" ]]; then
 		botsay "$channel $(fortune "$fortloc/fortgen")"
 
 	elif [[ "$in_cmd" == "$fortcmd-add" ]] ; then
-		fortmes="${message#* }"
+		#fortmes="${message#* }"
 		echo -e "$fortmes\n%" >> "$fortloc/fortgen"
-			strfile "$fortloc/fortgen" "$fortloc/fortgen.dat" > /dev/null 2>&1
-
+		strfile "$fortloc/fortgen" "$fortloc/fortgen.dat" > /dev/null 2>&1
+	elif [[ "$in_cmd" == "$fortcmd-search" && $fortmes == *[[:alpha:]]* ]] ; then
+		botsay "$channel $(grep -m1 -E "$fortmes" $fortloc/fortgen)"
 	elif [[ "$in_cmd" == "$fortcmd-count" ]] ; then
 		botsay "$channel $(($(wc -l "$fortloc/fortgen" | cut -d' ' -f1) / 2)) total entries."
 
