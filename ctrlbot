@@ -40,12 +40,17 @@ join_channel() {
 }
 
 leave_channel() {
-	echo ":j $1 $2" > $pipe/in
+	echo ":l $1" > $pipe/in
 }
 
 add_channel() {
+
+	# Testing config secret file.
+	[[ -f "$cwd/.chans" ]] && chans="$cwd/.chans"
+
 	echo "$@" >> $chans
 	echo ":j $1 $2" > $pipe/in
+
 }
 
 rm_channel() {
@@ -77,7 +82,7 @@ botsay() {
 	# Split at every 400th character, so the 
 	# message isn't too long for the server.
 	for ((c = 0; c < "${#mesg}"; c+= 400)); do
-		echo ":m $chan ${mesg:c:c+400}" > $pipe/in
+		echo ":m" "$chan" "${mesg:c:c+400}" > $pipe/in
 	done
 
 }
