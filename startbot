@@ -24,22 +24,21 @@ botstart() {
 
 	# Start the process, pipe output to main loop.
 	sic -h "$network" -p "$port" -n "$bot_nick" <> $pipe/in |
-	while read line; do
+	while read -ra line; do
 
-		read -ra toks <<< "$line"
-		botlog "${toks[@]}"
+		botlog "${line[@]}"
 
-		if [[ ${toks[4]} == "376" ]] ; then
+		if [[ ${line[4]} == "376" ]] ; then
 			botlog "Joining channels... "
 			join_channels
 			botsay "nickserv identify $bot_pass"
 			bot_loaded="true"
 		else 
-			channel="${toks[0]}"
-			nick="${toks[4]//[<>]/}"
-			message="${toks[@]:5}"
+			channel="${line[0]%:*}"
+			nick="${line[4]//[<>]/}"
+			message="${line[@]:5}"
 			[[ "$channel" == "$bot_nick" ]] && channel="$nick"
-			[[ "${toks[5]}" == '!reload' ]] && bot_load
+			[[ "${line[5]}" == '!reload' ]] && bot_load
 			# Speed up motd scroll by not running scripts.
 			[[ "$bot_loaded" == 'true'   ]] && run_scripts
 		fi

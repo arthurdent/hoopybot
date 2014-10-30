@@ -29,6 +29,7 @@ join_channels() {
 }
 
 run_scripts() {
+	echo "$channel" > /tmp/debug
 	[[ "$nick" == "$bot_nick" ]] && return
 	for script in "${script_list[@]}" ; do
 		"$script"
